@@ -54,7 +54,7 @@ RSpec.describe Simplekiq::OrchestrationExecutor do
       let(:workflow) { [] }
 
       it "immediately calls the orchestration callbacks" do
-        expect(job).to receive(:on_success).with(nil, "args" => ["some", "args"])
+        expect(job).to receive(:on_success).with(nil, { "args" => ["some", "args"] })
 
         execute
       end
