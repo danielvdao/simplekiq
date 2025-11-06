@@ -3,11 +3,6 @@
 module Simplekiq
   class OrchestrationExecutor
     def self.execute(args:, job:, workflow:)
-      if workflow.empty?
-        Simplekiq.run_empty_callbacks(job, args: args)
-        return
-      end
-
       orchestration_batch = Sidekiq::Batch.new
       orchestration_batch.description = "#{job.class.name} Simplekiq orchestration"
       Simplekiq.auto_define_callbacks(orchestration_batch, args: args, job: job)
@@ -15,7 +10,7 @@ module Simplekiq
       orchestration_batch.jobs do
         Simplekiq::BatchTrackerJob.perform_async(job.class.name, orchestration_batch.bid, args)
 
-        new.run_step(workflow, 0)
+        new.run_step(workflow, 0) unless workflow.empty?
       end
     end
 

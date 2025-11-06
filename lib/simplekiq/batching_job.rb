@@ -93,24 +93,16 @@ module Simplekiq
       # to toggle the behavior on and off.
       if batch
         batch.jobs do
-          handle_batches(args)
+          flush_batches(args)
         end
       else
-        handle_batches(args)
+        flush_batches(args)
       end
     end
 
     protected # TODO: should this be private?
 
     attr_accessor :batches
-
-    def handle_batches(args)
-      if !batches.empty?
-        flush_batches(args)
-      else
-        Simplekiq.run_empty_callbacks(self, args: args)
-      end
-    end
 
     def flush_batches(args)
       batch_job_class = self.class.const_get(BATCH_CLASS_NAME)

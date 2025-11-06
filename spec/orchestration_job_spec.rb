@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "sidekiq/testing"
+
 RSpec.describe Simplekiq::OrchestrationJob do
   let!(:job) do
     stub_const("FakeOrchestration", Class.new do
@@ -21,6 +23,36 @@ RSpec.describe Simplekiq::OrchestrationJob do
 
   def perform
     job.perform("some", "args")
+  end
+
+  describe "on_complete" do
+    let!(:job) do
+      Class.new do
+        include Simplekiq::OrchestrationJob
+
+        def self.on_complete_called(args)
+        end
+
+        def perform_orchestration
+        end
+
+        def on_complete(_, options)
+          self.class.on_complete_called(options["args"])
+        end
+      end
+    end
+
+    before do
+      Sidekiq::Testing.inline!
+      stub_batches
+    end
+
+    it "runs the on_complete callback even if no jobs are run", sidekiq: :fake do
+      expect(job).to receive(:on_complete_called).with([])
+
+      job.new.perform()
+      run_all_jobs_and_batches
+    end
   end
 
   it "adds a new job to the sequence with #run" do
