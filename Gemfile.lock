@@ -2,8 +2,8 @@ PATH
   remote: .
   specs:
     simplekiq (0.2.0)
-      sidekiq (>= 7.1)
-      sidekiq-pro (~> 7.1)
+      sidekiq (>= 7.1, < 9.0)
+      sidekiq-pro (>= 7.1, < 9.0)
 
 GEM
   remote: https://artifacts.dox.support/repository/gems/
