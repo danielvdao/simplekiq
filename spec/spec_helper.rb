@@ -41,7 +41,7 @@ module SidekiqBatchTestHelpers
   end
 
   def send_batch_callbacks_for(current_batches, status)
-    callback_symbol = "on_#{status}".to_sym
+    callback_symbol = :"on_#{status}"
     current_batches.each do |batch|
       next unless batch.callbacks[status]
 

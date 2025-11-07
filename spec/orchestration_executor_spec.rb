@@ -54,7 +54,7 @@ RSpec.describe Simplekiq::OrchestrationExecutor do
       let(:workflow) { [] }
 
       it "creates new batches or run any steps" do
-        expect(batch_double).to receive(:jobs) { |&block| block.call}
+        expect(batch_double).to receive(:jobs) { |&block| block.call }
         expect(described_class).not_to receive(:new)
 
         subject

@@ -143,7 +143,7 @@ module Simplekiq
 
     def module_parent_of_class
       # Borrowed from https://apidock.com/rails/Module/module_parent_name
-      parent_name = self.class.name =~ /::[^:]+\Z/ ? $`.freeze : nil
+      parent_name = (self.class.name =~ /::[^:]+\Z/) ? $`.freeze : nil
       parent_name ? Object.const_get(parent_name) : Object
     end
   end

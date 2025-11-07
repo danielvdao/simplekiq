@@ -6,6 +6,7 @@ RSpec.describe Simplekiq::OrchestrationJob do
   let!(:job) do
     stub_const("FakeOrchestration", Class.new do
       include Simplekiq::OrchestrationJob
+
       def perform_orchestration(first, second)
         run OrcTest::JobA, first
         run OrcTest::JobB, second
@@ -50,7 +51,7 @@ RSpec.describe Simplekiq::OrchestrationJob do
     it "runs the on_complete callback even if no jobs are run", sidekiq: :fake do
       expect(job).to receive(:on_complete_called).with([])
 
-      job.new.perform()
+      job.new.perform
       run_all_jobs_and_batches
     end
   end
@@ -91,6 +92,7 @@ RSpec.describe Simplekiq::OrchestrationJob do
     let!(:job) do
       stub_const("FakeOrchestration", Class.new do
         include Simplekiq::OrchestrationJob
+
         def perform_orchestration(first, second)
           run OrcTest::JobA, first
           in_parallel do
