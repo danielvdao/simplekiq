@@ -65,4 +65,6 @@ workflows:
     jobs:
       - build:
           <<: *always_run
-          context: sidekiq-enterprise
+          context:
+            - sidekiq-enterprise
+            - nexus_readonly
