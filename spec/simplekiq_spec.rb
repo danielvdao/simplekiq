@@ -20,41 +20,6 @@ RSpec.describe Simplekiq do
     expect(Simplekiq::VERSION).not_to be nil
   end
 
-  describe ".run_empty_callbacks" do
-    let(:args) { [1, 2, 3] }
-    let(:job) { OrcTest::CallbacksJob.new }
-
-    def call
-      Simplekiq.run_empty_callbacks(job, args: args)
-    end
-
-    it "calls the on_success and on_complete callback methods on the job" do
-      expect(job).to receive(:on_complete).with(nil, "args" => [1, 2, 3])
-      expect(job).to receive(:on_success).with(nil, "args" => [1, 2, 3])
-      call
-    end
-
-    it "does not call on_death" do
-      expect(job).not_to receive(:on_death)
-      call
-    end
-
-    context "when the job does not define the callback methods" do
-      let(:job) { OrcTest::BasicJob.new }
-
-      it "does not call any callbacks" do
-        # This approach ends up making the object appear to `respond_to?` each method because of the spy rspec adds
-        # expect(job).not_to receive(:on_complete)
-        # expect(job).not_to receive(:on_success)
-        # expect(job).not_to receive(:on_death)
-
-        # so instead, just:
-        expect { call }.not_to raise_error
-        # since it'd raise a NoMethodError if it tried to call them for this class
-      end
-    end
-  end
-
   describe ".auto_define_callbacks" do
     let(:batch) { instance_double(Sidekiq::Batch) }
     let(:args) { [1, 2, 3] }

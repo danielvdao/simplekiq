@@ -61,7 +61,7 @@
 
 module Simplekiq
   module BatchingJob
-    include Sidekiq::Worker
+    include Sidekiq::Job
 
     BATCH_CLASS_NAME = "SimplekiqBatch"
 
@@ -93,24 +93,16 @@ module Simplekiq
       # to toggle the behavior on and off.
       if batch
         batch.jobs do
-          handle_batches(args)
+          flush_batches(args)
         end
       else
-        handle_batches(args)
+        flush_batches(args)
       end
     end
 
     protected # TODO: should this be private?
 
     attr_accessor :batches
-
-    def handle_batches(args)
-      if !batches.empty?
-        flush_batches(args)
-      else
-        Simplekiq.run_empty_callbacks(self, args: args)
-      end
-    end
 
     def flush_batches(args)
       batch_job_class = self.class.const_get(BATCH_CLASS_NAME)
@@ -141,7 +133,7 @@ module Simplekiq
   end
 
   class BaseBatch
-    include Sidekiq::Worker
+    include Sidekiq::Job
 
     def perform(*args)
       module_parent_of_class.new.perform_batch(*args)
@@ -151,7 +143,7 @@ module Simplekiq
 
     def module_parent_of_class
       # Borrowed from https://apidock.com/rails/Module/module_parent_name
-      parent_name = self.class.name =~ /::[^:]+\Z/ ? $`.freeze : nil
+      parent_name = (self.class.name =~ /::[^:]+\Z/) ? $`.freeze : nil
       parent_name ? Object.const_get(parent_name) : Object
     end
   end

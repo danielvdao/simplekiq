@@ -4,16 +4,12 @@ executors:
   ruby:
     resource_class: small
     docker:
-      - image: cimg/ruby:2.6
-        environment:
-          BUNDLE_VERSION: "~> 2.1.4"
+      - image: cimg/ruby:3.3
   ruby-with-redis:
     resource_class: small
     docker:
-      - image: cimg/ruby:2.6
-        environment:
-          BUNDLE_VERSION: "~> 2.1.4"
-      - image: redis:4-alpine
+      - image: cimg/ruby:3.3
+      - image: redis:6.2
         command: redis-server
 
 # yaml anchor filters
@@ -69,4 +65,6 @@ workflows:
     jobs:
       - build:
           <<: *always_run
-          context: sidekiq-enterprise
+          context:
+            - sidekiq-enterprise
+            - nexus_readonly

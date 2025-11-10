@@ -1,10 +1,10 @@
 source "https://rubygems.org"
 
-source "https://enterprise.contribsys.com/" do
-  gem "sidekiq-pro", "5.2.1"
+source "https://artifacts.dox.support/repository/gems" do
+  gem "sidekiq-pro", "7.3.6"
 end
 
-gem "sidekiq", "6.1.0"
+gem "sidekiq", "7.3.7"
 
 # Specify your gem's dependencies in simplekiq.gemspec
 gemspec

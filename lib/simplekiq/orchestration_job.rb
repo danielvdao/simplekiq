@@ -4,9 +4,10 @@ require "forwardable"
 
 module Simplekiq
   module OrchestrationJob
-    include Sidekiq::Worker
+    include Sidekiq::Job
 
     extend Forwardable
+
     def_delegators :orchestration, :run, :in_parallel
 
     def perform(*args)
