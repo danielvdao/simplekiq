@@ -13,6 +13,7 @@ module Simplekiq
     def perform(*args)
       perform_orchestration(*args)
 
+      validate_sidekiq_job_included!
       # This makes it so that if there is a parent batch which this orchestration is run under, then the layered batches will be:
       # parent_batch( orchestration_batch( batch_of_first_step_of_the_orchestration ) )
       # If there is no parent batch, then it will simply be:
@@ -28,6 +29,14 @@ module Simplekiq
     end
 
     private
+
+    def validate_sidekiq_job_included!
+      orchestration.serialized_workflow.flatten.each do |step|
+        if !Object.const_get(step["klass"]).include?(Sidekiq::Job)
+          raise "Sidekiq::Job must be included in the job class"
+        end
+      end
+    end
 
     def conditionally_within_parent_batch
       if batch

@@ -17,9 +17,9 @@ RSpec.describe Simplekiq::OrchestrationJob do
   end
 
   before do
-    stub_const("OrcTest::JobA", Class.new)
-    stub_const("OrcTest::JobB", Class.new)
-    stub_const("OrcTest::JobC", Class.new)
+    stub_const("OrcTest::JobA", Class.new { include Sidekiq::Job })
+    stub_const("OrcTest::JobB", Class.new { include Sidekiq::Job })
+    stub_const("OrcTest::JobC", Class.new { include Sidekiq::Job })
   end
 
   def perform
@@ -119,6 +119,16 @@ RSpec.describe Simplekiq::OrchestrationJob do
       )
 
       perform
+    end
+  end
+
+  context "when a job class does not include Sidekiq::Job" do
+    before do
+      stub_const("OrcTest::JobA", Class.new)
+    end
+
+    it "raises an error" do
+      expect { perform }.to raise_error("Sidekiq::Job must be included in the job class")
     end
   end
 end
